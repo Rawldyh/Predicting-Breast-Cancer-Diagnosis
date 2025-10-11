@@ -75,11 +75,9 @@ Results will be presented through:
 ```
 breast-cancer-diagnosis/
 │
-├── data/
-│   └── breast_cancer_data.csv
+├──data.csv
 │
-├── notebooks/
-│   └── breast_cancer_diagnosis.ipynb
+├──breast_cancer_diagnosis.ipynb
 │
 ├── app/
 │   └── streamlit_app.py
