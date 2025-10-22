@@ -110,28 +110,7 @@ joblib — Model persistence
 
 streamlit — App deployment
 
-## Project Streucture
-Perfect — that’s super clear. We’ll fix your **Project Structure** section to exactly reflect what’s on your GitHub, and I’ll also show you how to insert the header image properly in the README so it displays right at the top.
-
-Here’s the corrected block you can **copy and paste directly** into your README:
-
----
-
-```markdown
-# Breast Cancer Diagnosis Prediction
-**By Rolddy Surpris and Naël Yssa Iben Ahmed Robert**
-
-![Header Image](header.png)
-
-## Overview
-This project aims to build a machine learning model capable of distinguishing malignant from benign breast tumors using diagnostic features derived from digitized cell nuclei images.
-
-Inspired by Pink October, the international month for breast cancer awareness, this project combines data science and healthcare research to explore how AI can support early detection and improve diagnostic accuracy.
-
-...
-
 ## Project Structure
-```
 
 breast-cancer-diagnosis/
 │
