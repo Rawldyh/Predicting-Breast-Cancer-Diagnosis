@@ -1,31 +1,77 @@
-# Deployment.py
 import streamlit as st
 import pandas as pd
-import joblib
 import numpy as np
+import joblib
 
-# Load trained pipeline (includes scaling + interactions)
-model = joblib.load("best_logistic_model.pkl")
+# Page configuration (must be first Streamlit command)
+st.set_page_config(page_title="Breast Cancer Prediction", layout="wide")
 
-# Sidebar: Model info and disclaimer
-st.sidebar.title("Model Info")
+# Load trained model
+@st.cache_resource
+def load_model():
+    return joblib.load("best_logistic_model.pkl")
+
+model = load_model()
+
+# Chrome-style pink gradient background and readable text
+st.markdown("""
+<style>
+/* Gradient pink background */
+body, .stApp, [data-testid="stAppViewContainer"] {
+    background: linear-gradient(to bottom right, #ffe6f0, #ffd1e8);
+}
+
+/* Sidebar background */
+[data-testid="stSidebar"] {
+    background-color: #ffe6f0;
+}
+
+/* Titles */
+h1 {
+    color: #c2185b;
+    text-align: center;
+}
+
+/* Text readable on pink */
+div, p, span, label {
+    color: #222222 !important;
+}
+
+/* Buttons */
+div.stButton > button {
+    background-color: #c2185b;
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 0.5em 1em;
+}
+div.stButton > button:hover {
+    background-color: #9a1550;
+    color: white;
+}
+
+/* Slider styling */
+.stSlider [role="slider"] {
+    color: #c2185b;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# Sidebar
+st.sidebar.title("Model Information")
 st.sidebar.markdown("""
 **Model:** Logistic Regression with Engineered Features  
 **Recall (Malignant):** 0.95  
-**Accuracy:** 97.4%  
+**Accuracy:** 97.4%
 """)
 st.sidebar.markdown("---")
-st.sidebar.markdown("⚠️ This tool is for educational and research purposes only. It does **not** replace clinical judgment.")
+st.sidebar.markdown("⚠️ This tool is for educational and research purposes only. It does **not** represent a medical or official diagnostic.")
 
 # Main title
 st.title("Breast Cancer Prediction App")
-st.write("""
-This app predicts whether a tumor is malignant or benign based on input features.
+st.write("Enter tumor features below. Predictions for values outside typical ranges may be less reliable but are allowed.")
 
-**Note:** Enter values within realistic ranges. Predictions for extreme values may be unreliable.
-""")
-
-# Original features expected from user
+# Feature list
 raw_features = [
     "radius_mean", "texture_mean", "perimeter_mean", "area_mean", "smoothness_mean",
     "compactness_mean", "concavity_mean", "concave points_mean", "symmetry_mean",
@@ -36,7 +82,7 @@ raw_features = [
     "concavity_worst", "concave points_worst", "symmetry_worst", "fractal_dimension_worst"
 ]
 
-# Typical ranges
+# Typical ranges (for warnings only)
 feature_ranges = {
     "radius_mean": (6, 28), "texture_mean": (10, 40), "perimeter_mean": (40, 190),
     "area_mean": (200, 2500), "smoothness_mean": (0.05, 0.15), "compactness_mean": (0.0, 1.0),
@@ -54,44 +100,43 @@ feature_ranges = {
 user_input = {}
 warnings = []
 
-with st.expander("Enter Tumor Features"):
-    for feature in raw_features:
-        low, high = feature_ranges[feature]
-        default = round((low + high) / 2, 4)
-        value = st.number_input(f"{feature} (typical range: {low}–{high})", value=default)
-        user_input[feature] = value
-        if value < low or value > high:
-            warnings.append(f"- {feature} is outside typical range ({low}–{high})")
+with st.expander("Enter Tumor Features", expanded=True):
+    cols = st.columns(3)
+    for i, feature in enumerate(raw_features):
+        default = 0.0
+        with cols[i % 3]:
+            value = st.number_input(f"{feature}", value=default, key=feature)
+            user_input[feature] = value
+            # Soft warning
+            low, high = feature_ranges.get(feature, (None, None))
+            if low is not None and (value < low or value > high):
+                warnings.append(f"- {feature} ({value}) is outside typical range ({low}-{high})")
 
 if warnings:
-    st.warning("Some values are outside typical tumor ranges:\n" + "\n".join(warnings))
-    st.info("Predictions for these values may be less reliable.")
+    st.warning("Some inputs are outside typical ranges:\n" + "\n".join(warnings))
 
-# Compute engineered features
+# Feature engineering
 def compute_engineered_features(data):
     df = pd.DataFrame([data])
-    df["area_perimeter_ratio"] = df["area_mean"] / df["perimeter_mean"]
-    df["concavity_smoothness_ratio"] = df["concavity_mean"] / df["smoothness_mean"]
-    df["radius_worst_to_mean"] = df["radius_worst"] / df["radius_mean"]
+    df["area_perimeter_ratio"] = df["area_mean"] / df["perimeter_mean"] if df["perimeter_mean"][0] != 0 else 0
+    df["concavity_smoothness_ratio"] = df["concavity_mean"] / df["smoothness_mean"] if df["smoothness_mean"][0] !=0 else 0
+    df["radius_worst_to_mean"] = df["radius_worst"] / df["radius_mean"] if df["radius_mean"][0] !=0 else 0
     for col in ["area_mean", "perimeter_mean", "concavity_mean"]:
         df[f"log_{col}"] = np.log1p(df[col])
     return df
 
 input_df = compute_engineered_features(user_input)
 
-# Threshold slider
-threshold = st.slider("Decision Threshold (default = 0.5)", 0.0, 1.0, 0.5)
-
-# Predict
+# Predict button
 if st.button("Predict"):
     try:
-        proba = model.predict_proba(input_df)[0][1]
-        prediction = int(proba >= threshold)
-
+        prediction = model.predict(input_df)[0]
         if prediction == 1:
-            st.error(f"Prediction: Malignant\nProbability: {proba:.2f}")
+            st.error("Prediction: Malignant")
+            st.write("This prediction is **not a medical or official diagnostic**.")
         else:
-            st.success(f"Prediction: Benign\nProbability: {1 - proba:.2f}")
+            st.success("Prediction: Benign")
+            st.write("This prediction is **not a medical or official diagnostic**.")
     except Exception as e:
         st.error(f"Prediction failed: {e}")
         st.info("Check that all input features are numeric and match the model.")
