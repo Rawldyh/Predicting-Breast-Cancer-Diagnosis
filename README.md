@@ -87,11 +87,13 @@ The app allows users to input tumor characteristics and instantly receive a diag
 2. A `Deployment.py` script was created to load the model and build an interactive web interface.  
 3. The app can be run locally using Streamlit.
 
-**To run the app:**  
+**To run the app locally (on your computer):**  
 ```bash
 pip install streamlit joblib pandas scikit-learn
 streamlit run Deployment.py
 ```
+**To use the app on your browser**
+Link : https://predicting-breast-cancer-diagnosis.streamlit.app/
 The application demonstrates how data science solutions can transition from research to real-world clinical decision support.
 
 ## Tools and Libraries
@@ -127,6 +129,7 @@ breast-cancer-diagnosis/
 │
 ├── deployment.py
 ├── best_logistic_model.pkl
+├── requirements.txt
 │
 ├── Rapport final.pdf
 ├── Non-technical Presentation.pdf
