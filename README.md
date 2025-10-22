@@ -113,8 +113,9 @@ streamlit — App deployment
 
 ## Project Structure
 
-breast-cancer-diagnosis/
 ```
+breast-cancer-diagnosis/
+
 │
 ├── data.csv
 ├── clean_data.csv
