@@ -1,6 +1,6 @@
 # Breast Cancer Diagnosis Prediction
 **By Rolddy Surpris and Naël Yssa Iben Ahmed Robert**
-
+![Header Image](header.png)
 ## Overview
 This project aims to build a machine learning model capable of distinguishing malignant from benign breast tumors using diagnostic features derived from digitized cell nuclei images.
 
