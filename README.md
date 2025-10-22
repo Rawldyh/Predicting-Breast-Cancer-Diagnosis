@@ -85,7 +85,7 @@ The app allows users to input tumor characteristics and instantly receive a diag
 **Deployment workflow:**  
 1. The best model was saved as `best_logistic_model.pkl`.  
 2. A `Deployment.py` script was created to load the model and build an interactive web interface.  
-3. The app can be run locally using Streamlit.
+3. The app can be run locally using Streamlit or on your browser using the link.
 
 **To run the app locally (on your computer):**  
 ```bash
