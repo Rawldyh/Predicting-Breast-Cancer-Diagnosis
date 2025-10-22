@@ -125,7 +125,7 @@ breast-cancer-diagnosis/
 ├── optimisation.ipynb
 │
 ├── deployment.py
-├──best_logistic_model.pkl
+├── best_logistic_model.pkl
 │
 ├── Rapport final.pdf
 ├── Non-technical Presentation.pdf
