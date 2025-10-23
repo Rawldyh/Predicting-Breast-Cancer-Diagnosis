@@ -80,7 +80,7 @@ These results highlight strong reliability while acknowledging the natural unpre
 
 ## Deployment
 The trained logistic regression model was exported using **Joblib** and deployed via a **Streamlit web app**.  
-The app allows users to input tumor characteristics and instantly receive a diagnostic prediction (Benign or Malignant) along with a probability score.
+The app allows users to input tumor characteristics and instantly receive a diagnostic prediction (Benign or Malignant).
 
 **Deployment workflow:**  
 1. The best model was saved as `best_logistic_model.pkl`.  
